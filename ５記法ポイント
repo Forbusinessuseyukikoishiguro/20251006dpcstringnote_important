@@ -1,0 +1,191 @@
+最高です🐰✨
+では、**「うさうさ大福店の税込合計を計算する関数」**を題材にして、
+4つの主要docstringスタイル（**Google / NumPy / reST / Markdown**）を
+**1行ずつ丁寧にコメントで解説**していきます。
+
+---
+
+# 🥇 ① Google スタイル
+
+👉 一番人気・Google公式スタイルガイド準拠。
+読みやすく、Sphinx でも pdoc でもそのままOK。
+
+```python
+def calc_total(price: float, quantity: int, tax_rate: float = 0.10) -> float:
+    """税込の合計金額を計算します。                # ← 一行目：簡潔な要約（何をする関数か）
+
+    Args:                                             # ← 引数(Arguments)の説明ブロック開始
+        price (float): 1個あたりの税抜価格（円）       # ← 引数priceの型と意味
+        quantity (int): 購入する個数                   # ← 引数quantityの型と意味
+        tax_rate (float, optional): 消費税率（デフォルト10%） # ← デフォルト値も明示
+
+    Returns:                                          # ← 戻り値(Returns)の説明ブロック開始
+        float: 税込みの合計金額（小数点2桁に丸め）     # ← 戻り値の型と意味
+
+    Example:                                          # ← 使用例ブロック（任意だがおすすめ）
+        >>> calc_total(180, 3)                        # ← doctest形式の例
+        594.0                                         # ← 期待される出力結果
+    """
+    subtotal = price * quantity  # 小計（税抜）を計算
+    total = subtotal * (1 + tax_rate)  # 税込み金額を計算
+    return round(total, 2)  # 小数点2桁で丸めて返す
+```
+
+🪄 **ポイント：**
+
+* `Args` や `Returns` はインデント2段階。
+* デフォルト値や単位を忘れず書く。
+* 一行目は**動詞で始める**のが推奨（例：「計算します」など）。
+* `Example:` で doctest も書ける（自動テスト対応）。
+
+---
+
+# 🥈 ② NumPy スタイル
+
+👉 科学技術系プロジェクト（NumPy, Pandas, SciPyなど）でよく使う形式。
+**見出しを水平線で区切る**のが特徴。
+
+```python
+def calc_total(price: float, quantity: int, tax_rate: float = 0.10) -> float:
+    """
+    税込の合計金額を計算します。                    # ← 一行目：関数の要約
+
+    Parameters                                       # ← 引数（Parameters）のセクション開始
+    ----------                                        # ← 水平線（必ず10個以上の - で区切る）
+    price : float                                     # ← 引数名 : 型
+        1個あたりの税抜価格（円）                   # ← 説明は次の行にインデントして書く
+    quantity : int
+        購入する個数
+    tax_rate : float, optional
+        消費税率（デフォルト10%）
+
+    Returns                                           # ← 戻り値のセクション
+    -------
+    float
+        税込みの合計金額（小数点2桁に丸め）
+
+    Examples                                          # ← 使用例セクション
+    --------
+    >>> calc_total(180, 3)
+    594.0
+    """
+    subtotal = price * quantity
+    total = subtotal * (1 + tax_rate)
+    return round(total, 2)
+```
+
+🪄 **ポイント：**
+
+* 区切り線（`----------`）が必須。
+* 引数・戻り値は「型 → 説明」の順。
+* 科学論文や技術ドキュメントに向く整然とした書式。
+* `Examples` も統一スタイルで表示される。
+
+---
+
+# 🥉 ③ reStructuredText（reST）スタイル
+
+👉 Sphinx でよく使われる、**古典的で正式なドキュメント用構文**。
+タグ形式で、読みやすく堅い印象。
+
+```python
+def calc_total(price: float, quantity: int, tax_rate: float = 0.10) -> float:
+    """
+    税込の合計金額を計算します。                     # ← 一行目：関数の概要
+
+    :param price: 1個あたりの税抜価格（円）            # ← :param <引数名>: 説明
+    :type price: float                                 # ← :type <引数名>: 型
+    :param quantity: 購入する個数
+    :type quantity: int
+    :param tax_rate: 消費税率（デフォルト10%）
+    :type tax_rate: float
+    :returns: 税込みの合計金額（小数点2桁）
+    :rtype: float
+    :raises ValueError: price または quantity が負の場合
+    """
+    if price < 0 or quantity < 0:
+        raise ValueError("price と quantity は正の数である必要があります")
+    subtotal = price * quantity
+    return round(subtotal * (1 + tax_rate), 2)
+```
+
+🪄 **ポイント：**
+
+* `:param:` / `:type:` / `:returns:` / `:rtype:` のペアで説明。
+* `:raises:` で例外（エラー）を明示できる。
+* Sphinx がそのままHTML化できる（APIドキュメント用に最適）。
+
+---
+
+# 🍀 ④ Markdown 風
+
+👉 Jupyter NotebookやREADMEでよく使う**カジュアルスタイル**。
+GitHubなどでも見やすい。
+
+````python
+def calc_total(price: float, quantity: int, tax_rate: float = 0.10) -> float:
+    """
+    ### 税込の合計金額を計算します 🐇                  # ← Markdownの見出し（###）
+
+    **Args**                                          # ← 太字でセクションタイトル
+    - price (float): 1個あたりの税抜価格（円）         # ← 箇条書きで引数説明
+    - quantity (int): 購入する個数
+    - tax_rate (float): 消費税率（デフォルト10%）
+
+    **Returns**                                       # ← 戻り値の説明
+    - float: 税込みの合計金額（小数点2桁に丸め）
+
+    **Example**                                       # ← 例（同じくMarkdown書式）
+    ```python
+    >>> calc_total(180, 3)
+    594.0
+    ```
+    """
+    subtotal = price * quantity
+    total = subtotal * (1 + tax_rate)
+    return round(total, 2)
+````
+
+🪄 **ポイント：**
+
+* Markdown形式なので、JupyterやGitHubでそのまま表示がきれい。
+* Sphinx の Markdown拡張（`myst_parser`）にも対応。
+* 「技術ブログ」や「チュートリアル形式のノート」に最適。
+
+---
+
+# 🧠 各スタイルの特徴まとめ
+
+| スタイル         | 見た目   | 向いている用途         | 特徴       |
+| ------------ | ----- | --------------- | -------- |
+| **Google**   | シンプル  | 一般開発・チーム向け      | 学びやすく標準的 |
+| **NumPy**    | 整然    | 科学技術・分析プロジェクト   | 研究系で定番   |
+| **reST**     | 厳格    | Sphinx公式ドキュメント  | タグ形式・正確  |
+| **Markdown** | カジュアル | ノート・README・教育用途 | 見栄え良く柔軟  |
+
+---
+
+# 🧩 使って確認する方法（REPL例）
+
+```python
+>>> from daifuku import calc_total
+>>> help(calc_total)
+Help on function calc_total in module daifuku:
+
+calc_total(price: float, quantity: int, tax_rate: float = 0.1) -> float
+    税込の合計金額を計算します。
+
+    Args:
+        price (float): 1個あたりの税抜価格（円）
+        ...
+```
+
+💡 これで、どのスタイルでも `help()` や IDE のホバーで読みやすく説明が出ます！
+
+---
+
+もし希望があれば次に👇
+
+* 各スタイルで **クラス版（DaifukuShop）** のdocstringも作成
+* doctest 付きで**自動テストできる例**も追加
+  どちらを見たいですか？ 🐇
