@@ -1,0 +1,194 @@
+とっても良い質問です🐇✨
+Python の **docstring（ドックストリング）** は、
+コードに「説明書（ドキュメント）」を埋め込むための公式な方法です。
+
+ここでは新人エンジニア向けに、
+
+> 💡「docstringとは？」
+> 💡「どうやって確認・実行するの？」
+> 💡「`__doc__`, `__name__`, `help()` の使い方」
+> を **対話シェル（Python REPL）で実演する形** でやさしく説明します。
+
+---
+
+## 🥇 まず：docstringとは？
+
+* Python のクラス・関数・モジュールの最初に書く
+  三重クォート（`""" ... """`）の文字列。
+* コードの**説明文**で、`help()`コマンドやツールから読める。
+
+例：
+
+```python
+def say_hello():
+    """うさうさ店長があいさつします。"""
+    print("🐇 こんにちは、うさうさです！")
+```
+
+---
+
+## 🐚 対話シェルで実行してみよう
+
+Python のシェル（REPL）を起動します。
+
+```bash
+python
+```
+
+出てきたら、次を入力👇
+
+```python
+>>> def say_hello():
+...     """うさうさ店長があいさつします。"""
+...     print("🐇 こんにちは、うさうさです！")
+...
+```
+
+---
+
+## 🧁 ① `help()` 関数で見る
+
+```python
+>>> help(say_hello)
+Help on function say_hello in module __main__:
+
+say_hello()
+    うさうさ店長があいさつします。
+```
+
+👆これが **docstringの中身**。
+Pythonは`help()`を使うと自動的にdocstringを読み取ってくれます！
+
+---
+
+## 🧁 ② `__doc__` 属性で直接見る
+
+```python
+>>> say_hello.__doc__
+'うさうさ店長があいさつします。'
+```
+
+📘 `__doc__` は、関数やクラスの「ドキュメント文字列」を格納している属性です。
+
+* つまり **関数名.**doc**** でdocstringを文字列として取り出せます。
+
+---
+
+## 🧁 ③ `__name__` で関数やモジュール名を確認
+
+```python
+>>> say_hello.__name__
+'say_hello'
+```
+
+📘 `__name__` は「関数の名前」や「現在のモジュール名」を表します。
+
+* 関数の中では「その関数名」
+* スクリプト全体では `"__main__"`（直接実行時）
+
+例：
+
+```python
+>>> __name__
+'__main__'
+```
+
+---
+
+## 🧁 ④ クラスにも同じように使える！
+
+```python
+>>> class Usausa:
+...     """うさうさ大福店の店長クラス。"""
+...     def greet(self):
+...         """あいさつメソッド"""
+...         print("🐇 いらっしゃいませ！")
+...
+>>> help(Usausa)
+Help on class Usausa in module __main__:
+
+class Usausa(builtins.object)
+ |  うさうさ大福店の店長クラス。
+ |
+ |  Methods defined here:
+ |
+ |  greet(self)
+ |      あいさつメソッド
+```
+
+docstring は **クラス**にも**メソッド**にも使えます。
+
+---
+
+## 🧁 ⑤ ファイルに書いた場合の docstring
+
+ファイル名：`usausa_shop.py`
+
+```python
+"""🐇 うさうさ大福店のモジュール"""
+
+def calc_tax(price: float) -> float:
+    """税込金額を返します。"""
+    return price * 1.1
+```
+
+対話シェルで実行：
+
+```python
+>>> import usausa_shop
+>>> help(usausa_shop)
+Help on module usausa_shop:
+
+NAME
+    usausa_shop - 🐇 うさうさ大福店のモジュール
+
+FUNCTIONS
+    calc_tax(price: float) -> float
+        税込金額を返します。
+```
+
+docstring がモジュールレベルでもちゃんと出ます。
+
+---
+
+## 🧁 ⑥ 複数レベルで確認する例
+
+```python
+>>> usausa_shop.__doc__
+'🐇 うさうさ大福店のモジュール'
+>>> usausa_shop.calc_tax.__doc__
+'税込金額を返します。'
+>>> usausa_shop.__name__
+'usausa_shop'
+```
+
+---
+
+## 🪄 まとめ表
+
+| 属性名        | 内容                 | 例                            |
+| ---------- | ------------------ | ---------------------------- |
+| `__doc__`  | docstring（説明文）     | `say_hello.__doc__`          |
+| `__name__` | 関数やモジュールの名前        | `say_hello.__name__`         |
+| `__main__` | 現在直接実行中のスクリプト名     | `if __name__ == "__main__":` |
+| `help(対象)` | docstringを自動整形して出力 | `help(Usausa)`               |
+| `dir(対象)`  | 属性一覧を見る            | `dir(Usausa)`                |
+
+---
+
+## 🐰 実践Tips（うさうさ店長メモ）
+
+💡 docstringは「他の人が読む説明書」
+→ コードを書いたらまず `help()` で見て、きれいに出るか確認しよう！
+
+💡 チーム開発では **Google / NumPy / reST** のいずれかのフォーマットで統一！
+
+💡 AIや自動ドキュメント生成（例：Sphinx, pdoc）も
+→ docstringをそのまま使ってWebドキュメント化できます📚
+
+---
+
+ご希望があれば、次に👇
+🐇 **「docstringを自動でHTMLドキュメントに変換」**する実例（`pdoc`や`Sphinx`使用）も紹介できます。
+
+つづけて「自動ドキュメント生成版」も見てみますか？
