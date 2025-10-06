@@ -1,0 +1,140 @@
+いいですね！🐇🍡
+では、**新人エンジニア向け**に、かわいい「ふわふわ大福店・うさうさ店長」が登場する設定で、
+**Python の5大記法＋docstring＋型ヒント付き＋消費税計算プログラム**をやさしく説明します。
+
+---
+
+## 🐰 シナリオ：ふわふわ大福店「うさうさ」店長
+
+うさうさ店長のお店では、大福を販売しています。
+消費税を計算して、合計金額を出すプログラムを書いてみましょう！
+
+---
+
+## 🧩 Pythonの「５大記法」とは
+
+Pythonコードを書くときの基本的な書き方のルールを「５大記法」として整理します👇
+
+| 記法          | 内容        | 例                    |
+| ----------- | --------- | -------------------- |
+| ① **変数定義**  | 値を入れておく箱  | `price = 100`        |
+| ② **関数定義**  | 処理をまとめる   | `def calc_tax():`    |
+| ③ **条件分岐**  | if文で判断する  | `if tax_rate > 0:`   |
+| ④ **ループ**   | 繰り返し処理    | `for item in items:` |
+| ⑤ **クラス定義** | オブジェクトを表す | `class Shop:`        |
+
+---
+
+## 🍡 実例コード：うさうさ店長の大福お会計プログラム
+
+```python
+class DaifukuShop:
+    """
+    🐇 ふわふわ大福店「うさうさ」店長のクラス
+
+    Attributes:
+        name (str): 店名
+        tax_rate (float): 消費税率（例: 0.10 は 10%）
+    """
+
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        """
+        店舗を初期化します。
+
+        Args:
+            name (str): 店名
+            tax_rate (float): 消費税率（デフォルト10%）
+        """
+        self.name = name
+        self.tax_rate = tax_rate
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        """
+        合計金額（税込）を計算します。
+
+        Args:
+            price (float): 1個あたりの価格（税抜）
+            quantity (int): 個数
+
+        Returns:
+            float: 税込み合計金額
+        """
+        subtotal = price * quantity
+        total = subtotal * (1 + self.tax_rate)
+        return round(total, 2)
+
+    def print_receipt(self, item: str, price: float, quantity: int) -> None:
+        """
+        レシートを表示します。
+
+        Args:
+            item (str): 商品名
+            price (float): 税抜価格
+            quantity (int): 個数
+        """
+        total = self.calc_total(price, quantity)
+        print(f"🐇 {self.name}レシート 🧾")
+        print(f"{item} x {quantity}個")
+        print(f"税抜価格: {price}円")
+        print(f"消費税込合計: {total}円")
+        print("ありがとうございました！またどうぞ♪")
+
+
+# === 実行例 ===
+if __name__ == "__main__":
+    usausa = DaifukuShop("うさうさ大福店")
+    usausa.print_receipt(item="いちご大福", price=180, quantity=3)
+```
+
+---
+
+## 🧠 コード解説
+
+| 行動      | 使っている記法       | 内容                           |
+| ------- | ------------- | ---------------------------- |
+| クラス作成   | ⑤ クラス定義       | `DaifukuShop`                |
+| 初期設定    | ① 変数定義        | `self.name`, `self.tax_rate` |
+| 合計計算    | ② 関数定義        | `def calc_total()`           |
+| 計算式     | ③ 条件ではないが数式   | `subtotal * (1 + tax)`       |
+| 複数データ処理 | ④（必要ならforで拡張） | 今回は単品計算、拡張可能                 |
+| ドキュメント化 | docstring     | `"""説明"""`                   |
+
+---
+
+## 💡 実行方法
+
+ターミナル（またはVSCode等）で以下を実行します：
+
+```bash
+python usausa_shop.py
+```
+
+出力例👇
+
+```
+🐇 うさうさ大福店レシート 🧾
+いちご大福 x 3個
+税抜価格: 180円
+消費税込合計: 594.0円
+ありがとうございました！またどうぞ♪
+```
+
+---
+
+## 🌸 新人エンジニアへのポイント
+
+* **docstring** は「何をする関数か」を自動ドキュメント化するのに便利。
+  → VSCode や PyCharm で関数にカーソルを合わせると説明が出ます。
+* **型ヒント** (`price: float`, `quantity: int`) は読みやすく、バグを減らす。
+* **関数＋クラス＋docstring＋型ヒント**＝チーム開発での信頼度UP！
+
+---
+
+ご希望があれば次に👇
+💡 *「リストで複数商品をまとめてお会計」*
+💡 *「税込と税抜を選べる」*
+などにバージョンアップもできます。
+
+---
+
+つづけて、「複数商品対応版」も見たいですか？
