@@ -1,0 +1,150 @@
+了解です🐇✨
+では、**新人エンジニア向け**に「型ヒント」と「docstring（ドックストリング）」の**やさしい入門例**を、
+かわいい **うさうさ大福店🐰** のお買い物関数で紹介します。
+最初に“考え方” → 次に“コード例” → “確認の仕方” の順で丁寧に説明します。
+
+---
+
+## 🧠 まず考え方
+
+### 💡 型ヒントとは？
+
+Python に「この変数は何の型（種類）ですよ」と教える**ヒント**をつける記法。
+コンピュータは強制しないけど、**読みやすくなる**し、**エラーを早く見つけられる**！
+
+たとえば👇
+
+```python
+def add(a: int, b: int) -> int:
+    return a + b
+```
+
+* `a: int` → 「a は整数型（int）」
+* `b: int` → 「b も整数型」
+* `-> int` → 「戻り値も整数型」
+
+---
+
+### 💡 docstring（ドックストリング）とは？
+
+関数やクラスの**説明文**。
+関数のすぐ下に三重引用符 `""" ... """` で書く。
+
+```python
+def add(a: int, b: int) -> int:
+    """2つの整数を足し算して結果を返す。"""
+    return a + b
+```
+
+docstring は、
+
+* `help(関数名)` で見られる説明
+* IDE（VSCodeやPyCharm）でホバーすると出る
+* Sphinx や pdoc などの**自動ドキュメント生成ツール**にも使われる
+
+---
+
+## 🍡 うさうさ店長の例：税込金額を計算する関数
+
+### 🧾 コード例（Googleスタイル）
+
+```python
+def calc_total(price: float, quantity: int, tax_rate: float = 0.10) -> float:
+    """税込の合計金額を計算します。
+
+    Args:
+        price (float): 1個あたりの税抜価格（円）
+        quantity (int): 購入する個数
+        tax_rate (float, optional): 消費税率（デフォルト10%）
+
+    Returns:
+        float: 税込みの合計金額（小数点2桁に丸め）
+
+    Example:
+        >>> calc_total(180, 3)
+        594.0
+    """
+    subtotal = price * quantity  # 小計（税抜）
+    total = subtotal * (1 + tax_rate)  # 税込み
+    return round(total, 2)
+```
+
+---
+
+## 🪄 使い方（REPLで実行）
+
+Pythonシェルで↓
+
+```python
+>>> from shop import calc_total
+>>> help(calc_total)
+Help on function calc_total in module shop:
+
+calc_total(price: float, quantity: int, tax_rate: float = 0.1) -> float
+    税込の合計金額を計算します。
+
+    Args:
+        price (float): 1個あたりの税抜価格（円）
+        quantity (int): 購入する個数
+        tax_rate (float, optional): 消費税率（デフォルト10%）
+
+    Returns:
+        float: 税込みの合計金額（小数点2桁に丸め）
+```
+
+ちゃんと説明が出ます 🐰✨
+
+---
+
+## 🔍 型チェックしてみよう（オプション）
+
+もし `mypy` というツールを入れると、型ヒントが役立ちます。
+
+```bash
+pip install mypy
+mypy shop.py
+```
+
+すると型が間違ってたら警告してくれます👇
+（例：`calc_total("100", 3)` ←文字列を渡したら警告）
+
+---
+
+## 🐰 まとめ（新人さんの覚え方）
+
+| 用語            | 説明                | 例                  |
+| ------------- | ----------------- | ------------------ |
+| **型ヒント**      | 値の型（種類）を明示する      | `price: float`     |
+| **戻り値ヒント**    | 戻り値の型を指定する        | `-> float`         |
+| **docstring** | 関数やクラスの説明文        | `"""税込合計を計算"""`    |
+| **help()**    | docstring を見るコマンド | `help(calc_total)` |
+
+---
+
+## 💬 もう1つだけ練習！
+
+自分でも作ってみよう👇
+
+```python
+def greet(name: str) -> str:
+    """名前を受け取って、あいさつ文を返す。
+
+    Args:
+        name (str): あいさつする相手の名前
+
+    Returns:
+        str: あいさつ文
+
+    Example:
+        >>> greet("うさうさ")
+        'こんにちは、うさうささん！'
+    """
+    return f"こんにちは、{name}さん！"
+```
+
+---
+
+ご希望あれば、この `calc_total` や `greet` 関数を
+**NumPy style** や **reST style**、**Markdown風** に書き換えたバージョンも作れます。
+
+👉どのスタイルで練習したいですか？（Google / NumPy / reST / Markdown）
