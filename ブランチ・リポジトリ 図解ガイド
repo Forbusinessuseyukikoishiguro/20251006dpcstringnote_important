@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git ブランチ・リポジトリ 図解ガイド</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 10px;
+            font-size: 1.3em;
+        }
+        
+        .diagram {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+            position: relative;
+        }
+        
+        .repo-box {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .local-repo {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .github-repo {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .branch {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .branch-main {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .branch-develop {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .branch-feature {
+            background: #10b981;
+            color: white;
+        }
+        
+        .branch-hotfix {
+            background: #f97316;
+            color: white;
+        }
+        
+        .branch-bugfix {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .flow-box {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 15px 25px;
+            margin: 10px;
+            min-width: 150px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .arrow {
+            font-size: 2em;
+            color: #667eea;
+            margin: 0 10px;
+        }
+        
+        .commit-graph {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            line-height: 1.6;
+            margin: 15px 0;
+        }
+        
+        .commit {
+            color: #4ec9b0;
+        }
+        
+        .branch-label {
+            color: #ce9178;
+            font-weight: bold;
+        }
+        
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .code-comment {
+            color: #75715e;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 12px 25px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .flow-diagram {
+                flex-direction: column;
+            }
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌿 Git ブランチ・リポジトリ 図解ガイド</h1>
+        
+        <!-- セクション1: リポジトリとは -->
+        <div class="section">
+            <h2>📦 1. リポジトリとは?</h2>
+            
+            <div class="info-box">
+                <strong>リポジトリ = プロジェクトの保管庫</strong><br>
+                ファイルの変更履歴を全て記録する「タイムマシン付きフォルダ」のようなもの
+            </div>
+            
+            <div class="diagram">
+                <h3>🖥️ ローカルリポジトリ (あなたのPC)</h3>
+                <div class="repo-box local-repo">
+                    <strong>📁 my-project/</strong><br>
+                    ├── .git/ (履歴データ)<br>
+                    ├── index.html<br>
+                    ├── style.css<br>
+                    └── script.js<br><br>
+                    💻 <strong>あなただけが見れる</strong>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <div class="arrow">⬇️ git push</div>
+                    <div class="arrow">⬆️ git pull</div>
+                </div>
+                
+                <h3>☁️ リモートリポジトリ (GitHub)</h3>
+                <div class="repo-box github-repo">
+                    <strong>🌐 github.com/username/my-project</strong><br>
+                    ├── .git/ (履歴データ)<br>
+                    ├── index.html<br>
+                    ├── style.css<br>
+                    └── script.js<br><br>
+                    👥 <strong>チーム全員が見れる</strong>
+                </div>
+            </div>
+            
+            <div class="code-box">
+<span class="code-comment"># リポジトリの作成</span>
+git init                           <span class="code-comment"># ローカルリポジトリ作成</span>
+git clone https://github.com/...   <span class="code-comment"># GitHubから複製</span>
+            </div>
+        </div>
+        
+        <!-- セクション2: ブランチとは -->
+        <div class="section">
+            <h2>🌿 2. ブランチとは?</h2>
+            
+            <div class="info-box">
+                <strong>ブランチ = 平行世界</strong><br>
+                本番のコードを壊さずに、新機能を開発できる「別の作業空間」
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('visual')">📊 ビジュアル図</button>
+                <button class="tab-button" onclick="showTab('tree')">🌲 ツリー図</button>
+                <button class="tab-button" onclick="showTab('timeline')">⏱️ タイムライン</button>
+            </div>
+            
+            <div id="visual" class="tab-content active">
+                <div class="diagram">
+                    <h3>🎨 ブランチの視覚化</h3>
+                    <div class="commit-graph">
+<span class="branch-label">main</span>     <span class="commit">●───●───●───●───●</span>  (本番環境)
+                    ╲
+                     ╲
+<span class="branch-label">feature</span>        <span class="commit">●───●───●</span>      (新機能開発中)
+                           ╲
+                            ╲
+<span class="branch-label">bugfix</span>              <span class="commit">●</span>    (バグ修正中)
+                    </div>
+                    
+                    <p><strong>🔑 ポイント:</strong> 各ブランチは独立して作業できる!</p>
+                </div>
+            </div>
+            
+            <div id="tree" class="tab-content">
+                <div class="diagram">
+                    <h3>🌲 ブランチのツリー構造</h3>
+                    <div class="commit-graph">
+プロジェクト開始
+    │
+    ● 初期コミット
+    │
+    ├─────────────────────────┐
+    │                         │
+  <span class="branch-label">main</span>                    <span class="branch-label">develop</span>
+    │                         │
+    ● バグ修正                  ●───●───● 新機能追加
+    │                         │
+    │                         ├───┐
+    │                         │   │
+    │                         │  <span class="branch-label">feature/login</span>
+    │                         │   ●───●
+    │                         │
+    ●◀────マージ────────────────●
+                    </div>
+                </div>
+            </div>
+            
+            <div id="timeline" class="tab-content">
+                <div class="diagram">
+                    <h3>⏱️ 時系列で見るブランチ</h3>
+                    <div class="commit-graph">
+<strong>月曜日:</strong>
+  <span class="branch-label">main</span>    ● プロジェクト開始
+           │
+           └─→ <span class="branch-label">feature/login</span> 作成
+
+<strong>火曜日:</strong>
+  <span class="branch-label">main</span>    ● (変更なし)
+  <span class="branch-label">feature</span> ●───● ログイン画面作成
+
+<strong>水曜日:</strong>
+  <span class="branch-label">main</span>    ● バグ修正 (緊急!)
+  <span class="branch-label">feature</span> ●───●───● ログイン機能完成
+
+<strong>木曜日:</strong>
+  <span class="branch-label">main</span>    ●◀────マージ (feature統合)
+           │
+           ● 本番デプロイ
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- セクション3: ブランチの種類 -->
+        <div class="section">
+            <h2>🏷️ 3. ブランチの種類と使い分け</h2>
+            
+            <div class="diagram">
+                <h3>代表的なブランチ</h3>
+                
+                <div style="margin: 20px 0;">
+                    <span class="branch branch-main">main / master</span>
+                    <p style="margin-left: 20px;">
+                        <strong>役割:</strong> 本番環境用の最終コード<br>
+                        <strong>ルール:</strong> 直接編集しない!<br>
+                        <strong>いつ:</strong> リリース準備が整ったらマージ
+                    </p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <span class="branch branch-develop">develop</span>
+                    <p style="margin-left: 20px;">
+                        <strong>役割:</strong> 開発用のメインブランチ<br>
+                        <strong>ルール:</strong> featureブランチをマージする場所<br>
+                        <strong>いつ:</strong> 新機能を統合するとき
+                    </p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <span class="branch branch-feature">feature/〇〇〇</span>
+                    <p style="margin-left: 20px;">
+                        <strong>役割:</strong> 新機能の開発用<br>
+                        <strong>例:</strong> feature/user-login, feature/payment<br>
+                        <strong>いつ:</strong> 新しい機能を作るとき
+                    </p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <span class="branch branch-bugfix">bugfix/〇〇〇</span>
+                    <p style="margin-left: 20px;">
+                        <strong>役割:</strong> バグ修正用<br>
+                        <strong>例:</strong> bugfix/header-layout, bugfix/login-error<br>
+                        <strong>いつ:</strong> developのバグを直すとき
+                    </p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <span class="branch branch-hotfix">hotfix/〇〇〇</span>
+                    <p style="margin-left: 20px;">
+                        <strong>役割:</strong> 本番の緊急バグ修正<br>
+                        <strong>例:</strong> hotfix/critical-security-bug<br>
+                        <strong>いつ:</strong> 本番環境で緊急のバグが見つかったとき
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- セクション4: 実践フロー -->
+        <div class="section">
+            <h2>🚀 4. 実際の作業フロー</h2>
+            
+            <div class="success-box">
+                <strong>シナリオ:</strong> 新しいログイン機能を作る
+            </div>
+            
+            <div class="flow-diagram">
+                <div class="flow-box">1️⃣<br>mainブランチ<br>にいる</div>
+                <span class="arrow">→</span>
+                <div class="flow-box">2️⃣<br>featureブランチ<br>作成</div>
+                <span class="arrow">→</span>
+                <div class="flow-box">3️⃣<br>コード編集<br>コミット</div>
+                <span class="arrow">→</span>
+                <div class="flow-box">4️⃣<br>GitHubに<br>プッシュ</div>
+                <span class="arrow">→</span>
+                <div class="flow-box">5️⃣<br>mainに<br>マージ</div>
+            </div>
+            
+            <div class="code-box">
+<span class="code-comment"># ステップ1: 最新のmainを取得</span>
+git checkout main
+git pull origin main
+
+<span class="code-comment"># ステップ2: 新しいブランチを作成</span>
+git checkout -b feature/user-login
+
+<span class="code-comment"># ステップ3: コードを編集してコミット</span>
+git add .
+git commit -m "feat: ユーザーログイン機能を追加"
+
+<span class="code-comment"># ステップ4: GitHubにプッシュ</span>
+git push -u origin feature/user-login
+
+<span class="code-comment"># ステップ5: GitHubでPull Request作成</span>
+<span class="code-comment"># レビュー後、mainにマージ</span>
+
+<span class="code-comment"># ステップ6: ローカルを更新して削除</span>
+git checkout main
+git pull origin main
+git branch -d feature/user-login
+            </div>
+        </div>
+        
+        <!-- セクション5: チーム開発の例 -->
+        <div class="section">
+            <h2>👥 5. チーム開発での使い方</h2>
+            
+            <div class="diagram">
+                <h3>🏢 3人チームの例</h3>
+                <div class="commit-graph">
+<strong>太郎さん (あなた):</strong>
+  main    ●────────────────────●
+           ╲                      ╱
+  feature  ●───●───●  ログイン機能
+
+
+<strong>花子さん:</strong>
+  main    ●────────────────────●
+                ╲              ╱
+  feature       ●───●───●  決済機能
+
+
+<strong>次郎さん:</strong>
+  main    ●────────────────────●
+                      ╲      ╱
+  bugfix              ●───●  バグ修正
+                </div>
+                
+                <p><strong>💡 ポイント:</strong> みんな別々のブランチで作業するから、邪魔しない!</p>
+            </div>
+            
+            <div class="warning-box">
+                <strong>⚠️ 注意!</strong><br>
+                • mainブランチで直接作業しない<br>
+                • 作業前に必ず <span class="highlight">git pull</span> で最新を取得<br>
+                • こまめにコミット&プッシュする
+            </div>
+        </div>
+        
+        <!-- セクション6: よくある質問 -->
+        <div class="section">
+            <h2>❓ 6. よくある質問</h2>
+            
+            <div class="info-box">
+                <strong>Q1: ブランチを切り替えたら、ファイルが消えた!</strong><br>
+                A: 大丈夫! ブランチごとにファイルの状態が違うだけです。元のブランチに戻れば復活します。
+                <div class="code-box" style="margin-top: 10px;">
+git checkout feature/login  <span class="code-comment"># ファイルが消えた?</span>
+git checkout main           <span class="code-comment"># 戻れば復活!</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>Q2: どのブランチにいるか分からなくなった!</strong><br>
+                A: <span class="highlight">git branch</span> コマンドで確認できます。
+                <div class="code-box" style="margin-top: 10px;">
+git branch
+<span class="code-comment"># * feature/login  ← 今ここにいる!</span>
+<span class="code-comment">#   main</span>
+<span class="code-comment">#   develop</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>Q3: featureブランチを作ったけど、やっぱりやめたい</strong><br>
+                A: 削除すればOKです。
+                <div class="code-box" style="margin-top: 10px;">
+git checkout main              <span class="code-comment"># まず別のブランチに移動</span>
+git branch -d feature/login    <span class="code-comment"># 削除</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- セクション7: 練習問題 -->
+        <div class="section">
+            <h2>🎯 7. 練習してみよう!</h2>
+            
+            <div class="success-box">
+                <strong>練習課題:</strong> 「お問い合わせフォーム」を作る
+            </div>
+            
+            <div class="code-box">
+<span class="code-comment"># 1. mainから最新を取得</span>
+git checkout main
+git pull origin main
+
+<span class="code-comment"># 2. 新しいブランチを作成</span>
+git checkout -b feature/contact-form
+
+<span class="code-comment"># 3. ファイルを作成</span>
+echo "お問い合わせページ" > contact.html
+
+<span class="code-comment"># 4. コミット</span>
+git add contact.html
+git commit -m "feat: お問い合わせフォームを追加"
+
+<span class="code-comment"># 5. 現在のブランチを確認</span>
+git branch
+<span class="code-comment"># * feature/contact-form</span>
+
+<span class="code-comment"># 6. GitHubにプッシュ</span>
+git push -u origin feature/contact-form
+
+<span class="code-comment"># 7. mainに戻る</span>
+git checkout main
+
+<span class="code-comment"># 8. ブランチを削除</span>
+git branch -d feature/contact-form
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
