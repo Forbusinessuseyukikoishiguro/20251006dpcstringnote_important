@@ -1,0 +1,1133 @@
+
+🌿 Git ブランチ・リポジトリ 図解ガイド
+📦 1. リポジトリとは?
+
+リポジトリ = プロジェクトの保管庫
+ファイルの変更履歴を全て記録する「タイムマシン付きフォルダ」のようなもの
+🖥️ ローカルリポジトリ (あなたのPC)
+📁 my-project/
+├── .git/ (履歴データ)
+├── index.html
+├── style.css
+└── script.js
+
+💻 あなただけが見れる
+⬇️ git push
+⬆️ git pull
+☁️ リモートリポジトリ (GitHub)
+🌐 github.com/username/my-project
+├── .git/ (履歴データ)
+├── index.html
+├── style.css
+└── script.js
+
+👥 チーム全員が見れる
+# リポジトリの作成 git init # ローカルリポジトリ作成 git clone https://github.com/... # GitHubから複製
+🌿 2. ブランチとは?
+ブランチ = 平行世界
+本番のコードを壊さずに、新機能を開発できる「別の作業空間」
+📊 ビジュアル図
+🌲 ツリー図
+⏱️ タイムライン
+🎨 ブランチの視覚化
+main ●───●───●───●───● (本番環境) ╲ ╲ feature ●───●───● (新機能開発中) ╲ ╲ bugfix ● (バグ修正中)
+🔑 ポイント: 各ブランチは独立して作業できる!
+
+🏷️ 3. ブランチの種類と使い分け
+代表的なブランチ
+main / master
+役割: 本番環境用の最終コード
+ルール: 直接編集しない!
+いつ: リリース準備が整ったらマージ
+
+develop
+役割: 開発用のメインブランチ
+ルール: featureブランチをマージする場所
+いつ: 新機能を統合するとき
+
+feature/〇〇〇
+役割: 新機能の開発用
+例: feature/user-login, feature/payment
+いつ: 新しい機能を作るとき
+
+bugfix/〇〇〇
+役割: バグ修正用
+例: bugfix/header-layout, bugfix/login-error
+いつ: developのバグを直すとき
+
+hotfix/〇〇〇
+役割: 本番の緊急バグ修正
+例: hotfix/critical-security-bug
+いつ: 本番環境で緊急のバグが見つかったとき
+
+🚀 4. 実際の作業フロー
+シナリオ: 新しいログイン機能を作る
+1️⃣
+mainブランチ
+にいる
+→
+2️⃣
+featureブランチ
+作成
+→
+3️⃣
+コード編集
+コミット
+→
+4️⃣
+GitHubに
+プッシュ
+→
+5️⃣
+mainに
+マージ
+# ステップ1: 最新のmainを取得 git checkout main git pull origin main # ステップ2: 新しいブランチを作成 git checkout -b feature/user-login # ステップ3: コードを編集してコミット git add . git commit -m "feat: ユーザーログイン機能を追加" # ステップ4: GitHubにプッシュ git push -u origin feature/user-login # ステップ5: GitHubでPull Request作成 # レビュー後、mainにマージ # ステップ6: ローカルを更新して削除 git checkout main git pull origin main git branch -d feature/user-login
+👥 5. チーム開発での使い方
+🏢 3人チームの例
+太郎さん (あなた): main ●────────────────────● ╲ ╱ feature ●───●───● ログイン機能 花子さん: main ●────────────────────● ╲ ╱ feature ●───●───● 決済機能 次郎さん: main ●────────────────────● ╲ ╱ bugfix ●───● バグ修正
+💡 ポイント: みんな別々のブランチで作業するから、邪魔しない!
+
+⚠️ 注意!
+• mainブランチで直接作業しない
+• 作業前に必ず git pull で最新を取得
+• こまめにコミット&プッシュする
+❓ 6. よくある質問
+Q1: ブランチを切り替えたら、ファイルが消えた!
+A: 大丈夫! ブランチごとにファイルの状態が違うだけです。元のブランチに戻れば復活します。
+git checkout feature/login # ファイルが消えた? git checkout main # 戻れば復活!
+Q2: どのブランチにいるか分からなくなった!
+A: git branch コマンドで確認できます。
+git branch # * feature/login ← 今ここにいる! # main # develop
+Q3: featureブランチを作ったけど、やっぱりやめたい
+A: 削除すればOKです。
+git checkout main # まず別のブランチに移動 git branch -d feature/login # 削除
+🎯 7. 練習してみよう!
+練習課題: 「お問い合わせフォーム」を作る
+# 1. 
+
+
+# Git & GitHub チーム開発ガイド 🚀
+
+新人エンジニアさん、ようこそ! Windows環境でのGit操作を丁寧に説明しますね。
+
+---
+
+## 1️⃣ リバート vs リベース
+
+### 🔄 **リバート (Revert)**
+特定のコミットの変更を**打ち消す新しいコミット**を作成
+
+```bash
+# 特定のコミットを取り消す
+git revert <コミットハッシュ>
+
+# 例: 最新のコミットを取り消す
+git revert HEAD
+
+# 複数のコミットを取り消す
+git revert HEAD~3..HEAD
+```
+
+**特徴:**
+- ✅ 履歴を残す(安全)
+- ✅ 共有ブランチで使える
+- ✅ チーム開発向き
+
+---
+
+### 🔀 **リベース (Rebase)**
+コミット履歴を**付け替えて整理**する
+
+```bash
+# mainブランチの最新を取り込む
+git checkout feature/login
+git rebase main
+
+# インタラクティブモード(コミットを整理)
+git rebase -i HEAD~3
+
+# リベース中止
+git rebase --abort
+
+# 競合解決後に続行
+git rebase --continue
+```
+
+**特徴:**
+- ⚠️ 履歴を書き換える
+- ❌ プッシュ済みブランチでは使わない
+- ✅ ローカルで履歴を綺麗にする時に使う
+
+---
+
+## 2️⃣ チェリーピック (Cherry-pick)
+
+特定のコミットだけを**別のブランチに持ってくる**
+
+```bash
+# 特定のコミットを現在のブランチに適用
+git cherry-pick <コミットハッシュ>
+
+# 複数のコミットを適用
+git cherry-pick abc123 def456
+
+# 競合時の対応
+git cherry-pick --continue  # 解決後
+git cherry-pick --abort     # 中止
+```
+
+**使用例:**
+```bash
+# hotfixをmainとdevelopの両方に適用
+git checkout main
+git cherry-pick hotfix-commit-hash
+
+git checkout develop
+git cherry-pick hotfix-commit-hash
+```
+
+**注意点:**
+- ⚠️ 同じ変更が複数ブランチに存在(重複コミット)
+- 緊急バグ修正でよく使う
+
+---
+
+## 3️⃣ ブランチ命名規則 & コマンド
+
+### 📋 **一般的なブランチ名**
+
+| ブランチ名 | 用途 | 例 |
+|----------|------|-----|
+| `main` / `master` | 本番環境 | `main` |
+| `develop` | 開発統合 | `develop` |
+| `feature/*` | 新機能開発 | `feature/login-page` |
+| `bugfix/*` | バグ修正 | `bugfix/header-layout` |
+| `hotfix/*` | 緊急修正 | `hotfix/security-patch` |
+| `release/*` | リリース準備 | `release/v1.2.0` |
+
+---
+
+### 💻 **基本コマンド集**
+
+```bash
+# ========== ブランチ作成・切り替え ==========
+# 新しいブランチを作成して切り替え
+git checkout -b feature/user-profile
+
+# ブランチ切り替え
+git checkout develop
+
+# ブランチ一覧表示
+git branch          # ローカル
+git branch -r       # リモート
+git branch -a       # 全て
+
+# ========== リモート連携 ==========
+# ローカルブランチをリモートにプッシュ
+git push -u origin feature/user-profile
+
+# リモートの最新を取得
+git fetch origin
+
+# リモートの変更を取り込む
+git pull origin develop
+
+# ========== マージ ==========
+# developに戻ってfeatureをマージ
+git checkout develop
+git merge feature/user-profile
+
+# マージ後にリモートに反映
+git push origin develop
+
+# ========== ブランチ削除 ==========
+# ローカルブランチ削除
+git branch -d feature/user-profile
+
+# 強制削除(マージされてなくても)
+git branch -D feature/user-profile
+
+# リモートブランチ削除
+git push origin --delete feature/user-profile
+```
+
+---
+
+### ⚠️ **気をつけること**
+
+```bash
+# ❌ 間違い: mainブランチで直接作業
+git checkout main
+# 作業...
+
+# ✅ 正解: featureブランチを作る
+git checkout main
+git pull origin main
+git checkout -b feature/new-function
+
+# ❌ 間違い: コミット前にpull
+# (作業中の変更が消える可能性)
+
+# ✅ 正解: 先にコミットorスタッシュ
+git add .
+git commit -m "作業中"
+git pull origin develop
+
+# または
+git stash
+git pull origin develop
+git stash pop
+```
+
+---
+
+## 4️⃣ コンフリクト解消 (ステップバイステップ)
+
+### 🔴 **コンフリクト発生のシナリオ**
+
+```bash
+# Aさんとあなたが同じファイルを編集
+# あなたがpullした時に競合発生
+git pull origin develop
+```
+
+**エラーメッセージ:**
+```
+Auto-merging app.py
+CONFLICT (content): Merge conflict in app.py
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+---
+
+### 📝 **解消手順**
+
+#### **Step 1: 競合ファイルを確認**
+```bash
+# 競合しているファイル一覧
+git status
+```
+
+出力例:
+```
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   app.py
+```
+
+---
+
+#### **Step 2: ファイルを開いて編集**
+
+PyCharmまたはVSCodeで `app.py` を開くと:
+
+```python
+<<<<<<< HEAD (あなたの変更)
+def calculate(a, b):
+    return a + b
+=======
+def calculate(x, y):
+    return x * y
+>>>>>>> origin/develop (リモートの変更)
+```
+
+**編集後:**
+```python
+# どちらを採用するか決める、または両方を統合
+def calculate(a, b):
+    return a + b  # 足し算を採用
+```
+
+---
+
+#### **Step 3: 解決をマーク**
+```bash
+# 編集が終わったらaddする
+git add app.py
+
+# 全ての競合ファイルを確認
+git status
+```
+
+---
+
+#### **Step 4: コミット**
+```bash
+# マージコミットを作成
+git commit -m "Merge conflict resolved"
+
+# またはメッセージ無しで(自動生成される)
+git commit
+```
+
+---
+
+#### **Step 5: プッシュ**
+```bash
+git push origin develop
+```
+
+---
+
+### 🛠️ **便利なGitコマンド**
+
+```bash
+# ========== 競合解消の補助 ==========
+# 競合を中止して元に戻す
+git merge --abort
+git rebase --abort
+
+# こちら側を優先
+git checkout --ours app.py
+git add app.py
+
+# 相手側を優先
+git checkout --theirs app.py
+git add app.py
+
+# ========== マージツールを使う ==========
+git mergetool
+
+# ========== 差分確認 ==========
+# 競合部分を確認
+git diff
+
+# ブランチ間の差分
+git diff develop feature/login
+```
+
+---
+
+### 🎯 **PyCharmでの競合解決**
+
+PyCharmには優秀なマージツールがあります:
+
+1. **VCS → Git → Resolve Conflicts**
+2. 3つのパネルが表示:
+   - 左: あなたの変更
+   - 中央: 結果
+   - 右: リモートの変更
+3. `>>` または `<<` ボタンで選択
+4. **Apply** で完了
+
+---
+
+## 📚 **実践的なワークフロー例**
+
+```bash
+# 1. 最新のdevelopを取得
+git checkout develop
+git pull origin develop
+
+# 2. 作業用ブランチを作成
+git checkout -b feature/add-search
+
+# 3. 作業してコミット
+git add .
+git commit -m "Add search functionality"
+
+# 4. developの最新を取り込む(リベース)
+git fetch origin
+git rebase origin/develop
+
+# 5. 競合があれば解決
+# ... (上記の手順)
+git add .
+git rebase --continue
+
+# 6. リモートにプッシュ
+git push -u origin feature/add-search
+
+# 7. GitHubでPull Request作成
+
+# 8. レビュー後、マージされたらローカルを更新
+git checkout develop
+git pull origin develop
+
+# 9. 作業ブランチを削除
+git branch -d feature/add-search
+git push origin --delete feature/add-search
+```
+
+---
+
+## 🎓 **まとめ: 新人が覚えるべき順序**
+
+1. **基本**: `add`, `commit`, `push`, `pull`
+2. **ブランチ**: `checkout -b`, `merge`
+3. **競合解決**: 落ち着いて1ファイルずつ
+4. **応用**: `rebase`, `cherry-pick`, `revert`
+
+わからないことがあれば、いつでも質問してください! 🙌
+
+
+# 🚀 Git & GitHub チートシート - 完全版
+
+## 📦 初期設定
+
+### Gitのインストール確認
+```bash
+git --version
+```
+
+### 初回設定(必須)
+```bash
+# ユーザー名を設定
+git config --global user.name "あなたの名前"
+
+# メールアドレスを設定
+git config --global user.email "your.email@example.com"
+
+# 設定確認
+git config --list
+
+# エディタ設定(VSCode使う場合)
+git config --global core.editor "code --wait"
+```
+
+---
+
+## 🆕 リポジトリの作成
+
+### ローカルで新規作成
+```bash
+# 新しいフォルダを作成して初期化
+mkdir my-project
+cd my-project
+git init
+
+# 現在のフォルダを初期化
+git init
+```
+
+### GitHubから複製(クローン)
+```bash
+# HTTPSでクローン
+git clone https://github.com/username/repository.git
+
+# SSHでクローン
+git clone git@github.com:username/repository.git
+
+# 特定のフォルダ名でクローン
+git clone https://github.com/username/repository.git my-folder
+```
+
+---
+
+## 📝 基本的な作業フロー
+
+### 1. ファイルの変更を確認
+```bash
+# 変更されたファイルを確認
+git status
+
+# 詳細な差分を表示
+git diff
+
+# ステージングエリアの差分
+git diff --staged
+```
+
+### 2. ファイルをステージング
+```bash
+# 特定のファイルを追加
+git add file.txt
+
+# 複数ファイルを追加
+git add file1.txt file2.txt
+
+# 全てのファイルを追加
+git add .
+
+# 全ての変更(削除含む)を追加
+git add -A
+
+# 対話的に追加
+git add -p
+```
+
+### 3. コミット
+```bash
+# コミット(エディタが開く)
+git commit
+
+# メッセージ付きでコミット
+git commit -m "コミットメッセージ"
+
+# add + commit を一度に(追跡中のファイルのみ)
+git commit -am "メッセージ"
+
+# コミットメッセージを修正
+git commit --amend -m "修正したメッセージ"
+```
+
+### 4. リモートにプッシュ
+```bash
+# リモートにプッシュ
+git push origin main
+
+# 初回プッシュ(upstream設定)
+git push -u origin main
+
+# 全てのブランチをプッシュ
+git push --all
+
+# 強制プッシュ(危険! 注意)
+git push -f origin main
+```
+
+### 5. リモートから取得
+```bash
+# リモートの変更を取得(マージしない)
+git fetch origin
+
+# リモートの変更を取得してマージ
+git pull origin main
+
+# リベースしながらプル
+git pull --rebase origin main
+```
+
+---
+
+## 🌿 ブランチ操作
+
+### ブランチの確認・作成・切り替え
+```bash
+# ブランチ一覧(ローカル)
+git branch
+
+# ブランチ一覧(リモート含む)
+git branch -a
+
+# 新しいブランチを作成
+git branch feature/new-feature
+
+# ブランチを作成して切り替え
+git checkout -b feature/new-feature
+
+# ブランチを切り替え
+git checkout main
+
+# 新しいコマンド(Git 2.23以降)
+git switch main
+git switch -c feature/new-feature
+```
+
+### ブランチの削除
+```bash
+# ローカルブランチを削除(マージ済み)
+git branch -d feature/old-feature
+
+# ローカルブランチを強制削除
+git branch -D feature/old-feature
+
+# リモートブランチを削除
+git push origin --delete feature/old-feature
+```
+
+### ブランチのマージ
+```bash
+# mainブランチに戻る
+git checkout main
+
+# feature/new-featureをマージ
+git merge feature/new-feature
+
+# Fast-forwardしない
+git merge --no-ff feature/new-feature
+
+# マージを中止
+git merge --abort
+```
+
+---
+
+## 🔄 リモートリポジトリ操作
+
+### リモートの確認・追加
+```bash
+# リモートリポジトリの確認
+git remote -v
+
+# リモートを追加
+git remote add origin https://github.com/username/repository.git
+
+# リモートのURLを変更
+git remote set-url origin https://github.com/username/new-repository.git
+
+# リモートを削除
+git remote remove origin
+```
+
+### リモートブランチの操作
+```bash
+# リモートブランチを確認
+git branch -r
+
+# リモートの特定ブランチをチェックアウト
+git checkout -b feature/remote origin/feature/remote
+
+# ローカルブランチをリモートと紐付け
+git branch --set-upstream-to=origin/main main
+```
+
+---
+
+## 📜 コミット履歴の確認
+
+### ログの表示
+```bash
+# コミット履歴を表示
+git log
+
+# 1行で表示
+git log --oneline
+
+# グラフ表示
+git log --graph --oneline --all
+
+# 最新5件を表示
+git log -5
+
+# 特定の作者でフィルタ
+git log --author="名前"
+
+# 日付でフィルタ
+git log --since="2024-01-01" --until="2024-12-31"
+
+# ファイルの変更履歴
+git log -p file.txt
+```
+
+### コミットの詳細確認
+```bash
+# 特定のコミットを表示
+git show <コミットハッシュ>
+
+# 最新のコミットを表示
+git show HEAD
+
+# 1つ前のコミットを表示
+git show HEAD~1
+```
+
+---
+
+## ⏮️ 変更の取り消し
+
+### 作業ディレクトリの変更を取り消す
+```bash
+# 特定ファイルの変更を取り消す
+git checkout -- file.txt
+
+# 全てのファイルの変更を取り消す
+git checkout -- .
+
+# 新しいコマンド
+git restore file.txt
+git restore .
+```
+
+### ステージングを取り消す
+```bash
+# 特定ファイルをステージングから外す
+git reset HEAD file.txt
+
+# 全てのファイルをステージングから外す
+git reset HEAD
+
+# 新しいコマンド
+git restore --staged file.txt
+```
+
+### コミットを取り消す
+```bash
+# 最新のコミットを取り消す(変更は保持)
+git reset --soft HEAD~1
+
+# 最新のコミットを取り消す(ステージングも解除)
+git reset HEAD~1
+
+# 最新のコミットを完全に削除(危険!)
+git reset --hard HEAD~1
+
+# 特定のコミットまで戻る
+git reset --hard <コミットハッシュ>
+```
+
+### コミットを打ち消す(安全)
+```bash
+# 特定のコミットを打ち消す新しいコミットを作成
+git revert <コミットハッシュ>
+
+# 最新のコミットを打ち消す
+git revert HEAD
+```
+
+---
+
+## 🍒 応用コマンド
+
+### チェリーピック
+```bash
+# 特定のコミットを現在のブランチに適用
+git cherry-pick <コミットハッシュ>
+
+# 複数のコミットを適用
+git cherry-pick abc123 def456
+
+# 競合時の操作
+git cherry-pick --continue  # 解決後
+git cherry-pick --abort     # 中止
+```
+
+### リベース
+```bash
+# mainの最新を取り込む
+git rebase main
+
+# インタラクティブリベース(コミット整理)
+git rebase -i HEAD~3
+
+# リベース中の操作
+git rebase --continue  # 競合解決後
+git rebase --skip      # スキップ
+git rebase --abort     # 中止
+```
+
+### スタッシュ(一時保存)
+```bash
+# 現在の変更を一時保存
+git stash
+
+# メッセージ付きで保存
+git stash save "作業中の機能"
+
+# スタッシュ一覧
+git stash list
+
+# 最新のスタッシュを復元
+git stash pop
+
+# 特定のスタッシュを復元
+git stash apply stash@{0}
+
+# スタッシュを削除
+git stash drop stash@{0}
+
+# 全てのスタッシュを削除
+git stash clear
+```
+
+### タグ
+```bash
+# タグ一覧
+git tag
+
+# タグを作成
+git tag v1.0.0
+
+# 注釈付きタグを作成
+git tag -a v1.0.0 -m "バージョン1.0.0"
+
+# タグをプッシュ
+git push origin v1.0.0
+
+# 全てのタグをプッシュ
+git push --tags
+
+# タグを削除
+git tag -d v1.0.0
+git push origin :refs/tags/v1.0.0
+```
+
+---
+
+## 🔍 便利なコマンド
+
+### 検索
+```bash
+# コミットメッセージから検索
+git log --grep="バグ修正"
+
+# コード内を検索
+git grep "function"
+
+# 特定のファイルを含むコミットを検索
+git log --all -- path/to/file.txt
+```
+
+### 差分確認
+```bash
+# ブランチ間の差分
+git diff main feature/new
+
+# コミット間の差分
+git diff abc123 def456
+
+# ファイル名のみ表示
+git diff --name-only
+
+# 統計表示
+git diff --stat
+```
+
+### 作業者の確認
+```bash
+# ファイルの各行の作者を表示
+git blame file.txt
+
+# 特定の行範囲を表示
+git blame -L 10,20 file.txt
+```
+
+### クリーンアップ
+```bash
+# 追跡されていないファイルを削除(ドライラン)
+git clean -n
+
+# 追跡されていないファイルを削除
+git clean -f
+
+# ディレクトリも削除
+git clean -fd
+```
+
+---
+
+## ⚠️ 競合(コンフリクト)解消
+
+### 競合発生時
+```bash
+# 1. 競合しているファイルを確認
+git status
+
+# 2. ファイルを編集して競合を解消
+# <<<<<<< HEAD
+# あなたの変更
+# =======
+# 相手の変更
+# >>>>>>> branch-name
+
+# 3. 解決したファイルをadd
+git add file.txt
+
+# 4. マージを完了
+git commit
+
+# 競合解消のヘルパー
+git checkout --ours file.txt    # 自分の変更を採用
+git checkout --theirs file.txt  # 相手の変更を採用
+```
+
+---
+
+## 🔐 GitHub連携
+
+### SSH鍵の設定
+```bash
+# SSH鍵を生成
+ssh-keygen -t ed25519 -C "your.email@example.com"
+
+# SSH鍵をコピー(Windows)
+clip < ~/.ssh/id_ed25519.pub
+
+# GitHub設定 → SSH and GPG keys → New SSH key
+```
+
+### Personal Access Token(PAT)
+```bash
+# GitHubでPATを作成
+# Settings → Developer settings → Personal access tokens → Generate new token
+
+# HTTPS接続でPATを使用
+git clone https://github.com/username/repository.git
+# ユーザー名: username
+# パスワード: PAT
+```
+
+---
+
+## 🎯 よく使うエイリアス設定
+
+```bash
+# 便利なエイリアスを設定
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.unstage 'reset HEAD --'
+git config --global alias.last 'log -1 HEAD'
+git config --global alias.visual 'log --graph --oneline --all'
+
+# 使用例
+git st          # git status
+git co main     # git checkout main
+git visual      # きれいなグラフ表示
+```
+
+---
+
+## 📋 .gitignoreファイル
+
+### .gitignoreの例
+```bash
+# .gitignoreファイルを作成
+touch .gitignore
+```
+
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 環境変数
+.env
+.env.local
+
+# ビルド成果物
+dist/
+build/
+*.exe
+```
+
+---
+
+## 🚨 緊急時のコマンド
+
+### 間違えてコミットした時
+```bash
+# 最新のコミットを取り消し(変更は保持)
+git reset --soft HEAD~1
+
+# コミットメッセージを修正
+git commit --amend -m "正しいメッセージ"
+```
+
+### 間違えてプッシュした時
+```bash
+# ローカルで修正してから強制プッシュ(チームと調整!)
+git push -f origin main
+```
+
+### ファイルを間違えてコミットした時
+```bash
+# ファイルを削除して再コミット
+git rm --cached secret.txt
+git commit --amend
+```
+
+### ブランチを間違えた時
+```bash
+# コミットを別ブランチに移動
+git checkout correct-branch
+git cherry-pick <コミットハッシュ>
+
+# 元のブランチで削除
+git checkout wrong-branch
+git reset --hard HEAD~1
+```
+
+---
+
+## 📚 チーム開発のベストプラクティス
+
+### コミットメッセージの書き方
+```bash
+# ✅ 良い例
+git commit -m "feat: ユーザーログイン機能を追加"
+git commit -m "fix: ヘッダーのレイアウト崩れを修正"
+git commit -m "docs: READMEにインストール手順を追加"
+
+# ❌ 悪い例
+git commit -m "修正"
+git commit -m "変更"
+git commit -m "あああ"
+```
+
+### プルリクエストの流れ
+```bash
+# 1. 最新のmainを取得
+git checkout main
+git pull origin main
+
+# 2. 作業ブランチ作成
+git checkout -b feature/user-auth
+
+# 3. 作業してコミット
+git add .
+git commit -m "feat: ユーザー認証を実装"
+
+# 4. プッシュ
+git push -u origin feature/user-auth
+
+# 5. GitHubでPull Request作成
+
+# 6. レビュー後マージされたら
+git checkout main
+git pull origin main
+git branch -d feature/user-auth
+```
+
+---
+
+## 🆘 トラブルシューティング
+
+### よくあるエラーと対処法
+
+#### エラー: `fatal: not a git repository`
+```bash
+# 対処: Gitリポジトリを初期化
+git init
+```
+
+#### エラー: `Permission denied (publickey)`
+```bash
+# 対処: SSH鍵を設定
+ssh-keygen -t ed25519 -C "your.email@example.com"
+# 公開鍵をGitHubに登録
+```
+
+#### エラー: `Your branch is behind`
+```bash
+# 対処: リモートの変更を取り込む
+git pull origin main
+```
+
+#### エラー: `refusing to merge unrelated histories`
+```bash
+# 対処: 強制的にマージを許可
+git pull origin main --allow-unrelated-histories
+```
+
+---
+
+## 🎓 学習リソース
+
+- **公式ドキュメント**: https://git-scm.com/doc
+- **GitHub Docs**: https://docs.github.com
+- **練習サイト**: https://learngitbranching.js.org/
+
+---
+
+**💡 TIP**: このチートシートを印刷するか、ブックマークしていつでも参照できるようにしましょう!
+
+mainから最新を取得 git checkout main git pull origin main # 2. 新しいブランチを作成 git checkout -b feature/contact-form # 3. ファイルを作成 echo "お問い合わせページ" > contact.html # 4. コミット git add contact.html git commit -m "feat: お問い合わせフォームを追加" # 5. 現在のブランチを確認 git branch # * feature/contact-form # 6. GitHubにプッシュ git push -u origin feature/contact-form # 7. mainに戻る git checkout main # 8. ブランチを削除 git branch -d feature/contact-form
