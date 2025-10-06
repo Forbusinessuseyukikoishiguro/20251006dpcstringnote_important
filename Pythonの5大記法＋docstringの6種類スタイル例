@@ -1,0 +1,210 @@
+# ============================================
+# 🐇 ふわふわ大福店 うさうさ店長の学習スクリプト
+# Pythonの5大記法＋docstringの6種類スタイル例
+# ============================================
+
+# typing モジュールから型ヒント用ツールをインポート
+from typing import Self
+
+
+# --------------------------------------------
+# 🥇 パターン① Google Style Docstring
+# --------------------------------------------
+class DaifukuShopGoogle:
+    """うさうさ大福店のクラス（Google Style）
+
+    Attributes:
+        name (str): 店名
+        tax_rate (float): 消費税率
+    """
+
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        """初期化メソッド
+
+        Args:
+            name (str): 店名
+            tax_rate (float): 消費税率（デフォルト10%）
+        """
+        self.name = name  # 店名を設定
+        self.tax_rate = tax_rate  # 消費税率を設定
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        """合計金額（税込）を計算します。
+
+        Args:
+            price (float): 税抜価格
+            quantity (int): 個数
+
+        Returns:
+            float: 税込合計金額
+        """
+        subtotal = price * quantity  # 小計（税抜）
+        total = subtotal * (1 + self.tax_rate)  # 消費税込み計算
+        return round(total, 2)  # 小数点2桁で丸めて返す
+
+
+# --------------------------------------------
+# 🥈 パターン② NumPy Style Docstring
+# --------------------------------------------
+class DaifukuShopNumPy:
+    """
+    うさうさ大福店クラス（NumPy Style）
+
+    Parameters
+    ----------
+    name : str
+        店名
+    tax_rate : float, optional
+        消費税率 (デフォルトは0.10)
+    """
+
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        self.name = name
+        self.tax_rate = tax_rate
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        """
+        合計金額（税込）を計算します。
+
+        Parameters
+        ----------
+        price : float
+            税抜価格
+        quantity : int
+            個数
+
+        Returns
+        -------
+        float
+            税込合計金額
+        """
+        return round(price * quantity * (1 + self.tax_rate), 2)
+
+
+# --------------------------------------------
+# 🥉 パターン③ reStructuredText (reST)
+# --------------------------------------------
+class DaifukuShopReST:
+    """
+    うさうさ大福店クラス（reST形式）
+
+    :param name: 店名
+    :type name: str
+    :param tax_rate: 消費税率 (デフォルト0.10)
+    :type tax_rate: float
+    """
+
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        self.name = name
+        self.tax_rate = tax_rate
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        """
+        合計金額（税込）を計算します。
+
+        :param price: 税抜価格
+        :type price: float
+        :param quantity: 個数
+        :type quantity: int
+        :returns: 税込合計金額
+        :rtype: float
+        """
+        return round(price * quantity * (1 + self.tax_rate), 2)
+
+
+# --------------------------------------------
+# 🍀 パターン④ Markdown風 Docstring
+# --------------------------------------------
+class DaifukuShopMarkdown:
+    """
+    ## うさうさ大福店クラス 🐇
+
+    - **name (str)**: 店名  
+    - **tax_rate (float)**: 消費税率 (例: 0.10)
+    """
+
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        self.name = name
+        self.tax_rate = tax_rate
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        """
+        ### 合計金額計算
+
+        **Args**
+        - price (float): 税抜価格  
+        - quantity (int): 個数  
+
+        **Returns**
+        - float: 税込合計金額
+        """
+        return round(price * quantity * (1 + self.tax_rate), 2)
+
+
+# --------------------------------------------
+# 🧸 パターン⑤ シンプルコメント形式
+# --------------------------------------------
+class DaifukuShopSimple:
+    # うさうさ大福店クラス（コメントのみ）
+    def __init__(self, name: str, tax_rate: float = 0.10):
+        self.name = name  # 店名
+        self.tax_rate = tax_rate  # 消費税率
+
+    def calc_total(self, price: float, quantity: int) -> float:
+        # 合計金額（税込）を計算する
+        subtotal = price * quantity  # 小計
+        total = subtotal * (1 + self.tax_rate)  # 税込み計算
+        return round(total, 2)  # 小数点2桁丸め
+
+
+# --------------------------------------------
+# 🪄 パターン⑥ 型ヒント強化版 (Python 3.11+)
+# --------------------------------------------
+class DaifukuShopTyped:
+    """型ヒントを強化した最新版Python記法"""
+
+    name: str  # 店名
+    tax_rate: float  # 消費税率
+
+    def __init__(self, name: str, tax_rate: float = 0.10) -> None:
+        self.name = name
+        self.tax_rate = tax_rate
+
+    def calc_total(self, price: float, quantity: int, /) -> float:
+        """Calculate total price with tax."""
+        return round(price * quantity * (1 + self.tax_rate), 2)
+
+    def set_tax_rate(self: Self, new_rate: float) -> Self:
+        """消費税率を更新し、自分自身を返す"""
+        self.tax_rate = new_rate
+        return self
+
+
+# --------------------------------------------
+# 💡 動作テスト（全パターン比較）
+# --------------------------------------------
+if __name__ == "__main__":
+    print("=== うさうさ大福店・税込計算比較 ===")
+
+    # 商品データ
+    price = 180  # 1個あたりの税抜価格
+    quantity = 3  # 個数
+
+    # 各スタイルのインスタンスを作成
+    shops = [
+        DaifukuShopGoogle("Google式"),
+        DaifukuShopNumPy("NumPy式"),
+        DaifukuShopReST("reST式"),
+        DaifukuShopMarkdown("Markdown式"),
+        DaifukuShopSimple("コメント式"),
+        DaifukuShopTyped("型ヒント強化式"),
+    ]
+
+    # 各クラスで税込金額を計算して出力
+    for shop in shops:
+        total = shop.calc_total(price, quantity)
+        print(f"{shop.name}: {total}円（税込）")
+        
+        
+        #==================
+        #5記法　docstring
